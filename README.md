@@ -16,7 +16,12 @@ This project ensures consistent Java code formatting using a two-step process:
      - Click the gear icon and select "Import Scheme" → "IntelliJ IDEA code style XML".
      - Choose `intellij-formatter.xml` from this repository.
 
-2. **Formatter Adjusting Utility and Pre-commit Hook**
+2. **Formatter Adjusting Utility**
+   - Open a terminal and navigate to the `formatter-adjusting` directory:
+     - `cd formatter-adjusting`
+   - Run `mvn package` inside this directory to produce a JAR file named `formatter-adjusting-1.0-jar-with-dependencies.jar` in the `target/` folder.
+
+3. **'Formatter Adjusting Utility' and 'Pre-commit Hook' copy script**
    - Run the `copy-formatter-adjusting.sh` script with the path to the folder containing all Interacta repositories as an argument. For example:
      - `./copy-formatter-adjusting.sh </path/to/interacta-projects>`
    - This will copy the adjusting utility and install the pre-commit hook in each configured repository.
@@ -24,9 +29,9 @@ This project ensures consistent Java code formatting using a two-step process:
 ## Project Structure
 
 - `intellij-formatter.xml`: IntelliJ code style configuration.
-- `formatter-adjusting/`: Source code for the adjusting utility.
-- `formatter-adjusting/target/formatter-adjusting-1.0.jar`: Compiled adjusting utility.
-- `sample-hooks/pre-commit`: Pre-commit hook script which runs the adjusting utility before each commit.
+- `formatter-adjusting/src/`: Adjusting utility source code.
+- `formatter-adjusting/target/formatter-adjusting-1.0-jar-with-dependencies.jar`: Adjusting utility JAR.
+- `sample-hooks/pre-commit`: Pre-commit hook script which runs the adjusting utility JAR before each commit.
 - `copy-formatter-adjusting.sh`: Script to copy the adjusting utility and hook to multiple Interacta projects.
 
 ## Summary Table
