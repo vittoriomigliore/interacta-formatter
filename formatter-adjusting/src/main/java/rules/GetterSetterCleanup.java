@@ -26,19 +26,16 @@ public class GetterSetterCleanup implements FormattingRule {
         try {
             String originalContent = Files.readString(file.toPath(), StandardCharsets.UTF_8);
             CompilationUnit cu = StaticJavaParser.parse(originalContent);
-            boolean modified = applyToParsed(cu);
-            if (modified) {
-                Files.writeString(file.toPath(), cu.toString(), StandardCharsets.UTF_8);
-            }
+            String cleanedContent = getCleanedContent(originalContent, cu);
+            Files.writeString(file.toPath(), cleanedContent, StandardCharsets.UTF_8);
         } catch (IOException e) {
             logger.severe("Failed to process file: " + file.getAbsolutePath() + ", error: " + e.getMessage());
         }
     }
 
-    private boolean applyToParsed(CompilationUnit cu) {
-
-        boolean modified = false;
-
+    private String getCleanedContent(String originalContent, CompilationUnit cu) {
+        StringBuilder contentBuilder = new StringBuilder(originalContent);
+        int offset = 0; // Tracks the shift in indices as we replace content
         for (MethodDeclaration method : cu.findAll(MethodDeclaration.class)) {
             if (method.getBody().isEmpty()) {
                 continue;
@@ -47,18 +44,67 @@ public class GetterSetterCleanup implements FormattingRule {
             boolean isGetter = isGetter(method);
             boolean isSetter = isSetter(method);
             if (isGetter || isSetter) {
-                logger.info("Method '" + method.getNameAsString() + "' identified as " + (isGetter ? "getter" : "setter"));
+                logger.fine("Method '" + method.getNameAsString() + "' identified as " + (isGetter ? "getter" : "setter"));
                 BlockStmt body = method.getBody().get();
                 String original = body.toString();
                 String cleaned = cleanMethodBodyBraces(original);
-                if (!original.equals(cleaned)) {
-                    method.setBody(StaticJavaParser.parseBlock(cleaned));
-                    modified = true;
+                if (!original.equals(cleaned) && body.getBegin().isPresent() && body.getEnd().isPresent()) {
+                    int begin = getPositionOffset(originalContent, body.getBegin().get()) + offset;
+                    int end = getPositionOffset(originalContent, body.getEnd().get()) + offset;
+                    // end is inclusive, so add 1 to include the last character
+                    end += 1;
+                    // Detect indentation from the original content
+                    String indentation = getIndentationAt(originalContent, begin);
+                    String cleanedIndented = applyIndentationToBlock(cleaned, indentation);
+                    contentBuilder.replace(begin, end, cleanedIndented);
+                    // Update offset for next replacements
+                    offset += cleanedIndented.length() - (end - begin);
                 }
             }
         }
+        return contentBuilder.toString();
+    }
 
-        return modified;
+    // Helper to convert line/column to string offset
+    private int getPositionOffset(String content, com.github.javaparser.Position pos) {
+        int line = pos.line; // 1-based
+        int column = pos.column; // 1-based
+        int currentLine = 1;
+        int currentIndex = 0;
+        while (currentLine < line && currentIndex < content.length()) {
+            if (content.charAt(currentIndex) == '\n') {
+                currentLine++;
+            }
+            currentIndex++;
+        }
+        // Now at the start of the target line
+        return currentIndex + (column - 1);
+    }
+
+    // Helper to get indentation at a given offset
+    private String getIndentationAt(String content, int offset) {
+        int lineStart = content.lastIndexOf('\n', offset - 1) + 1;
+        int i = lineStart;
+        StringBuilder sb = new StringBuilder();
+        while (i < content.length() && (content.charAt(i) == ' ' || content.charAt(i) == '\t')) {
+            sb.append(content.charAt(i));
+            i++;
+        }
+        return sb.toString();
+    }
+
+    // Helper to apply indentation to each line of a block
+    private String applyIndentationToBlock(String block, String indentation) {
+        String[] lines = block.split("\n");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < lines.length; i++) {
+            if (i == 0) {
+                sb.append(lines[i]);
+            } else {
+                sb.append("\n").append(indentation).append(lines[i]);
+            }
+        }
+        return sb.toString();
     }
 
     private boolean isGetter(MethodDeclaration method) {
