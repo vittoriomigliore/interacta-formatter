@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+JAR_PATH="formatter-adjusting.jar"
+
+FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.java$' || true)
+
+if [ -z "$FILES" ]; then
+  exit 0
+fi
+
+java -jar "$JAR_PATH" $FILES
+
+for file in $FILES; do
+  git add "$file"
+done

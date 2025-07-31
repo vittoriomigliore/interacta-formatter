@@ -1,0 +1,18 @@
+<code_scheme name="Default" version="173">
+  <option name="LINE_SEPARATOR" value="&#10;" />
+  <JavaCodeStyleSettings>
+    <option name="DO_NOT_WRAP_AFTER_SINGLE_ANNOTATION_IN_PARAMETER" value="true" />
+    <option name="ANNOTATION_PARAMETER_WRAP" value="2" />
+    <option name="ALIGN_MULTILINE_ANNOTATION_PARAMETERS" value="true" />
+    <option name="NEW_LINE_AFTER_LPAREN_IN_ANNOTATION" value="true" />
+    <option name="RPAREN_ON_NEW_LINE_IN_ANNOTATION" value="true" />
+    <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="100" />
+    <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="100" />
+  </JavaCodeStyleSettings>
+  <codeStyleSettings language="JAVA">
+    <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="0" />
+    <option name="BLANK_LINES_BEFORE_METHOD_BODY" value="1" />
+    <option name="BLANK_LINES_AFTER_CLASS_HEADER" value="1" />
+    <option name="ALIGN_MULTILINE_METHOD_BRACKETS" value="true" />
+  </codeStyleSettings>
+</code_scheme>
