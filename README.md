@@ -29,8 +29,7 @@ This project ensures consistent Java code formatting using a two-step process:
 ## Project Structure
 
 - `intellij-formatter.xml`: IntelliJ code style configuration.
-- `formatter-adjusting/src/`: Adjusting utility source code.
-- `formatter-adjusting/target/formatter-adjusting-1.0-jar-with-dependencies.jar`: Adjusting utility JAR.
+- `formatter-adjusting/`: Adjusting utility.
 - `sample-hooks/pre-commit`: Pre-commit hook script which runs the adjusting utility JAR before each commit.
 - `copy-formatter-adjusting.sh`: Script to copy the adjusting utility and hook to multiple Interacta projects.
 
